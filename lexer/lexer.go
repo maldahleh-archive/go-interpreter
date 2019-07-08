@@ -5,10 +5,10 @@ import "langInterpreter/token"
 type valueValidator func(ch byte) bool
 
 type Lexer struct {
-	input        string
-	position     int  // current position in input
-	readPosition int  // current reading position in input
-	ch           byte // current char being inspected
+	input        string // lexer input
+	position     int    // current position in input
+	readPosition int    // current reading position in input
+	ch           byte   // current char being inspected
 }
 
 func New(input string) *Lexer {
@@ -130,5 +130,5 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 func (l *Lexer) newTwoCharToken(tokenType token.TokenType) token.Token {
 	ch := l.ch
 	l.readChar()
-	return token.Token{Type:tokenType, Literal:string(ch) + string(l.ch)}
+	return token.Token{Type: tokenType, Literal: string(ch) + string(l.ch)}
 }
