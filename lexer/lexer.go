@@ -2,6 +2,8 @@ package lexer
 
 import "langInterpreter/token"
 
+type valueValidator func(ch byte) bool
+
 type Lexer struct {
 	input        string
 	position     int  // current position in input
@@ -43,11 +45,11 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Type = token.EOF
 	default:
 		if isLetter(l.ch) {
-			tok.Literal = l.readIdentifier()
+			tok.Literal = l.readValue(isLetter)
 			tok.Type = token.LookupIdentifier(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
-			tok.Literal = l.readNumber()
+			tok.Literal = l.readValue(isDigit)
 			tok.Type = token.INT
 			return tok
 		} else {
@@ -59,18 +61,9 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func (l *Lexer) readIdentifier() string {
+func (l *Lexer) readValue(valueReader valueValidator) string {
 	startPosition := l.position
-	for isLetter(l.ch) {
-		l.readChar()
-	}
-
-	return l.input[startPosition:l.position]
-}
-
-func (l *Lexer) readNumber() string {
-	startPosition := l.position
-	for isDigit(l.ch) {
+	for valueReader(l.ch) {
 		l.readChar()
 	}
 
@@ -99,7 +92,7 @@ func isLetter(ch byte) bool {
 }
 
 func isDigit(ch byte) bool {
-	return '0' <= ch && ch <=  '9'
+	return '0' <= ch && ch <= '9'
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
