@@ -1,2 +1,2 @@
 # go-compiler
-Interpreter + Compiler written in Go
+Interpreter and Compiler written in Go
